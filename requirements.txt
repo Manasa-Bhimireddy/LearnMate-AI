@@ -6,7 +6,7 @@ gunicorn==26.2.0
 
 python-dotenv==1.2.2
 requests==2.34.2
-
+groq
 numpy==2.3.3
 pandas==3.0.3
 scikit-learn==1.8.0
