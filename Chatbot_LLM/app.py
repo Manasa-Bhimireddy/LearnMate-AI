@@ -37,7 +37,7 @@ def call_llm(prompt, history=None):
             
             completion = client.chat.completions.create(
                 messages=messages,
-                model="llama-3.3-70b-versatile"
+                model="openai/gpt-oss-120b"
             )
             return completion.choices[0].message.content
         except Exception as e:
@@ -46,7 +46,7 @@ def call_llm(prompt, history=None):
                 client = Groq(api_key=key)
                 completion = client.chat.completions.create(
                     messages=messages,
-                    model="llama-3.1-8b-instant"
+                    model="openai/gpt-oss-20b"
                 )
                 return completion.choices[0].message.content
             except Exception as e2:

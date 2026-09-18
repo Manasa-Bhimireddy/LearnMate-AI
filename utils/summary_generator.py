@@ -50,7 +50,7 @@ def generate_summary(text):
                         {"role": "system", "content": "You are a professional academic summarizer."},
                         {"role": "user", "content": prompt}
                     ],
-                    model="llama-3.1-8b-instant",
+                    model="llama3-8b-8192",
                     temperature=0.3
                 )
                 return completion.choices[0].message.content

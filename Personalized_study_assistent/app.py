@@ -44,7 +44,7 @@ def call_llm(prompt, system_instruction=None, json_mode=False):
             try:
                 completion = client.chat.completions.create(
                     messages=messages,
-                    model="llama-3.1-8b-instant",
+                    model="llama3-8b-8192",
                     response_format=response_format,
                     temperature=0.2 if json_mode else 0.7
                 )

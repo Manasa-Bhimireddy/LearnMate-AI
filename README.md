@@ -1,261 +1,193 @@
-# LastMinute.AI 🎓🤖
-### **Unified Student Learning Portal & AI-Powered Career Readiness System**
+# LearnMate AI 🎓🤖
+### **Intelligent Personalized Learning & Study Companion**
+*Product Requirements Document Version: 3.0 — Candidate Challenge Edition*
 
-Welcome to **LastMinute.AI**, a premium, state-of-the-art Single Page Application (SPA) designed to supercharge student learning, document comprehension, exam preparation, and career readiness. It provides a cohesive, high-fidelity dark glassmorphic interface that integrates five distinct educational tools under a single dashboard:
+> **LearnMate AI is an intelligent personalized learning platform that uses Artificial Intelligence, Retrieval-Augmented Generation (RAG), adaptive assessment, and learning analytics to provide students with a continuous and personalized learning experience. The system allows users to upload study materials, interact with a context-aware AI Tutor, take adaptive quizzes, track concept mastery and learning growth, and receive personalized recommendations. It also provides persistent learning context, background processing, analytics, and an administrative dashboard for monitoring platform activity and AI performance.**
 
-1.  **ATS Resume Scanner & Skill Gap Detector** (Cosine Similarity + CountVectorizer matching)
-2.  **RAG Document QA** (Context-aware search using local FAISS Vector Databases)
-3.  **Personalized Study Scheduler** (Week-by-week planner)
-4.  **Practice Assessments & 3D Flashcards** (Interactive MCQ grading & flipping study decks)
-5.  **AI Academic Tutor** (Conversational assistant with Llama 3.3 Flagship)
+LearnMate AI is a full-stack, AI-powered learning workspace designed to help users **understand, practice, measure, and continuously improve** a skill or area of knowledge. 
 
-Additionally, this workspace contains **four standalone sub-projects** for modular execution and submission.
+The core philosophy of this platform is that **learning should not be a collection of disconnected AI features**. A learner creates a learning goal, provides relevant materials, interacts with an evidence-grounded AI Tutor, tests their understanding with adaptive assessments, tracks concept mastery and growth trends, and receives actionable recommendations on what to do next.
 
 ---
 
-## 📖 Table of Contents
-1. [Core Features & Architecture](#-core-features--architecture)
-2. [Technology Stack](#-technology-stack)
-3. [Project Directory Layout](#-project-directory-layout)
-4. [Detailed API Configuration](#-detailed-api-configuration)
-5. [Setup & Installation Guide](#-setup--installation-guide)
-6. [Running the Application](#-running-the-application)
-7. [Unified Dashboard Interface Guide](#-unified-dashboard-interface-guide)
-8. [Standalone Sub-Projects Details](#-standalone-sub-projects-details)
-9. [Troubleshooting & FAQs](#-troubleshooting--faqs)
+## 🔄 The Primary Learning Loop
 
----
+```
+Create Space → Create Project → Upload Material → Process Knowledge → AI Tutor → Adaptive Quiz → Assessment → Mastery → Growth Analysis → Recommendation → Continue Learning
+```
 
-## 🌟 Core Features & Architecture
 
 ```mermaid
 graph TD
-    A[Student Uploads PDF/Word Resume] -->|Extract Text| B(pdfplumber / docx)
-    C[Job / Internship Description] --> D(Skills Matching Engine)
-    B --> D
-    D -->|CountVectorizer + Cosine Similarity| E[ATS Match Score]
-    D -->|Groq Llama 3.3 / Gemini| F[AI Learning Roadmap]
-    
-    G[Upload Course Slides/Textbook] -->|Split Text| H(RecursiveCharacterTextSplitter)
-    H -->|HuggingFace Embeddings| I(FAISS Local Database)
-    J[Student Questions active Document] -->|Similarity Search| I
-    I -->|Retrieved Context Excerpts| K[RAG Answer Engine]
-    K -->|Groq / Gemini LLM| L[Precise Cited Answers]
+    A[1. Create Space] --> B[2. Create Project & Goal]
+    B --> C[3. Add Learning Material PDF]
+    C --> D[4. Process & Extract Concepts Async]
+    D --> E[5. Learn with AI Tutor & Citations]
+    E --> F[6. Take Adaptive Quiz MCQ + Open-Ended]
+    F --> G[7. Evaluate Understanding & AI Feedback]
+    G --> H[8. Update Concept Mastery 0-100%]
+    H --> I[9. Analyze Growth Trends]
+    I --> J[10. Recommend Next Action]
+    J --> K[11. Continue Learning]
+    K --> E
 ```
 
-### 1. AI Resume Scorer & Skill Gap Detector
--   **Text Extraction**: Leverages `pdfplumber` and `docx` to cleanly parse formatted resumes.
--   **Skill matching**: Matches words using a word-boundary regular expression pattern (`\b`) against a pre-compiled dictionary of academic and technology terms in `skills_db.py`.
--   **ATS Similarity Metric**: Utilizes `CountVectorizer` to vectorize the resume and job description texts, computing a similarity rating using `cosine_similarity`.
--   **AI Recommendations**: Sends the matched and missing skills to the LLM to write a comprehensive learning roadmap detailing project ideas and study platforms.
+---
 
-### 2. Retrieval-Augmented Generation (RAG Document QA)
--   **Text Chunking**: Splits large PDFs, Word documents, or text files into `1000` character chunks with a `200` character overlap using LangChain's `RecursiveCharacterTextSplitter`.
--   **Vector Database**: Embeds chunks using LangChain's `HuggingFaceEmbeddings` (running the `sentence-transformers/all-MiniLM-L6-v2` model) and saves them locally in a FAISS index directory.
--   **Context Extraction**: Performs similarity search on user questions, extracting the top `4` relevant context passages.
--   **Synthesis**: Prompts the LLM with the context to answer the question, instructing it to strictly cite details from the uploaded material.
+## 🌟 Core System Highlights
 
-### 3. Personalized Study Planner
--   Collects the target goal, duration (weeks), weekly time commitment, and current skill level.
--   Generates week-by-week study planners, suggesting hours to spend on subtopics, coding tasks, and resource recommendations.
--   Features a dashboard integration that pins the generated plans as active target goals with progress bars.
+### 1. Spaces & Projects Hierarchy
+- **Strict Data Isolation**: Every Space contains focused Projects, and each Project strictly isolates its learning materials, semantic chunks, conversations, quizzes, concept mastery, and activity logs.
+- **Home Dashboard**: Implements the core UX triad:
+  - *Where was I?* — Quick resume banner for the most recent active project.
+  - *How am I doing?* — Average mastery score, concept counts (improving vs. requiring attention).
+  - *What should I do next?* — Actionable AI recommendation cards with one-click triggers.
 
-### 4. Interactive Practice Assessments
--   **MCQ Quiz**: Auto-generates multiple-choice questions on any subject. Grades answers in real-time, displaying animated success/danger checkmarks and detailed explanations of concepts.
--   **3D Flipping Flashcards**: Generates a card deck of key concepts. Cards flip in 3D when clicked, revealing definitions and explanations.
+### 2. Asynchronous Document Processing Pipeline
+- **Formats**: Multi-page PDFs (primary), DOCX, TXT.
+- **State Machine**: `Upload` → `Queued` → `Processing / OCR` → `Content & Structure Extraction` → `Knowledge Extraction` → `Search / Retrieval Indexing` → `Ready` (or `Failed` with one-click retry).
+- **Automated Concept Extraction**: Automatically analyzes documents to extract 4–7 core concepts with definitions and initializes baseline mastery levels.
+- **Page Tracing**: Every chunk maintains exact `page_number` metadata for citation resolution.
 
-### 5. AI Academic Tutor Chatbot
--   A general conversation window equipped with quick-start chips (Big O notation, Binary Search, Mitochondria ATP) to get instant help with homework, programming, or science topics.
+### 3. Grounded AI Tutor & Unsupported-Question Handling
+- **Context Composition**: Combines project materials + persistent learner context (strengths, weaknesses, repeated mistakes) + conversation history.
+- **Strict Citations**: Grounded answers always provide citations formatted as:
+  ```
+  Source: [Document Name] — Page [X]
+  ```
+- **Unsupported-Question Handling (Core Evaluation Requirement)**:
+  If a student asks a question for which there is insufficient evidence in the project materials (e.g. asking about baking recipes in an Operating Systems project), the Tutor **refuses to hallucinate**. It explicitly communicates that the uploaded materials lack sufficient evidence and clarifies what topics are covered.
+
+### 4. Adaptive Assessment & Multi-Factor Open-Ended Grader
+- **Adaptive Question Selection**: Selects concepts with trend `requiring_attention`, lower mastery scores, or flagged repeated mistakes.
+- **Dual Question Format**:
+  - **Multiple-Choice Questions (MCQ)**: Instant scoring and rubric explanations.
+  - **Open-Ended Questions**: Free-text answers evaluated by AI across understanding, accuracy, relevance, key concepts covered, and missing concepts.
+- **Constructive Explanatory Feedback**: Explains what was understood well versus what was missing, rather than returning only a number.
+
+### 5. Concept Mastery, Growth & Recommendations
+- **Mastery Levels**: Estimated mastery score (0% to 100%) per concept, dynamically updated via exponential moving average.
+- **Growth Analysis**: Classifies concepts into:
+  - 🟢 `Improving` (positive trajectory)
+  - 🟡 `Stable` (consistent understanding)
+  - 🔴 `Requiring Attention` (low scores or repeated mistakes)
+- **Targeted Recommendations**: Answers *"What should I do next?"* (e.g., *"Take a short adaptive quiz on Demand Paging to build confidence"*).
+
+### 6. Admin Dashboard & AI Observability
+- **Platform KPIs**: Total Users, Spaces, Projects, Materials, Total AI Calls, Total Estimated Cost ($), and Average Latency (ms).
+- **User Learning Journey Inspector**: Drill down into any student's projects, assessments, and AI usage history.
+- **AI Observability Breakdown**: Token usage, latency, and costs grouped by feature and model.
+- **Automated AI Evaluation Suite**: Built-in benchmark test harness executing standardized tests for:
+  - Tutor Groundedness
+  - Unsupported Question Rejection
+  - Assessment Grading Quality
+  - Recommendation Actionability
+- **Background Jobs Queue & System Health**: Live queue inspection, retry actions, database status, and LLM provider health.
 
 ---
 
 ## 🛠️ Technology Stack
 
--   **Backend Core**: Python 3.12, Flask, Flask-CORS, python-dotenv
--   **Vector Database**: `faiss-cpu` (Facebook AI Similarity Search)
--   **Orchestration**: LangChain, `langchain-community`, `langchain-text-splitters`
--   **Embeddings Model**: `sentence-transformers` (`all-MiniLM-L6-v2` - 384 dimensions)
--   **File Extraction**: `pypdf`, `pdfplumber`, `python-docx`
--   **Mathematical Metrics**: `scikit-learn` (CountVectorizer, cosine_similarity)
--   **LLM Providers**:
-    -   **Groq API**: Defaults to `llama-3.3-70b-versatile` (extremely fast, structured outputs), with automatic fallback to `llama-3.1-8b-instant` if rate limits are reached.
-    -   **Google Gemini API**: Uses `gemini-1.5-flash` via `google-generativeai`.
--   **Frontend Assets**: Vanilla HTML5, Vanilla CSS3 (custom CSS custom variables, dark theme gradients, floating animated blobs, glassmorphic layout), Vanilla ES6 JavaScript (Marked.js, Lucide Icons).
+- **Backend**: Python 3.10+, Flask, SQLite (with WAL mode & foreign keys)
+- **AI Gateway**: Groq SDK (LLaMA 3.3 70B & LLaMA 3.1 8B), Google Gemini SDK (Gemini 1.5 Flash)
+- **Document Processing**: `pdfplumber`, `pypdf`, `python-docx`
+- **NLP / Retrieval**: Scikit-Learn (TF-IDF vectorizer, cosine similarity), keyword token overlap
+- **Frontend**: Glassmorphic dark UI, Lucide Icons, Marked.js (Markdown), Chart.js (Analytics)
+- **Testing**: Python `unittest` suite
 
 ---
 
-## 📁 Project Directory Layout
+## 📁 Repository Directory Structure
 
 ```
-c:/Users/bhimi/OneDrive/Desktop/New folder/
-|-- app.py                     # Unified Portal Flask Server (Port 5000)
-|-- requirements.txt           # Main dependencies configuration
-|-- skills_db.py               # Pre-compiled database of tech & academic skills
-|-- .env                       # Local Environment configuration (API keys)
-|
-|-- templates/                 # Unified UI Templates
-|   |-- index.html             # High-fidelity dashboard interface
-|-- static/                    # Unified UI Static Assets
-|   |-- css/style.css          # Glassmorphic dark stylesheets & blob animations
-|   |-- js/app.js              # Client SPA controller & state coordinator
-|
-|-- utils/                     # Unified Portal Backend Utilities
-|   |-- __init__.py            # Package Init
-|   |-- docx_reader.py         # Parses MS Word DOCX files
-|   |-- pdf_reader.py          # Parses PDF files using PyPDF
-|   |-- vector_store.py        # Splits and indexes texts using LangChain & FAISS
-|   |-- rag_chat.py            # Formulates prompt context and requests RAG responses
-|   |-- quiz_generator.py      # Formulates MCQs using LLM structured JSON
-|   |-- flashcard_generator.py # Formulates Flashcards using LLM structured JSON
-|   |-- summary_generator.py   # Formulates Document summary
-|   |-- study_plan.py          # Formulates personalized study schedules
-|
-|-- AI_Resume_Analyser/        # 1. Standalone Resume Scorer (Port 5001)
-|   |-- app.py                 # Standalone Resume Matcher Flask Server
-|   |-- skills.py              # Skill list database
-|   |-- requirements.txt       # Dependencies
-|   |-- .env                   # Local credentials key
-|   |-- static/style.css       # Standalone stylesheet
-|   |-- templates/index.html   # Standalone HTML structure
-|
-|-- Chatbot_LLM/               # 2. Standalone Chatbot Tutor (Port 5002)
-|   |-- app.py                 # Standalone LLM Chat Flask Server
-|   |-- requirements.txt       # Dependencies
-|   |-- .env                   # Local credentials key
-|   |-- static/style.css       # Standalone stylesheet
-|   |-- templates/index.html   # Standalone Chat UI
-|
-|-- Personalized_study_assistent/ # 3. Standalone Study Planner (Port 5003)
-|   |-- app.py                 # Standalone Study Planner & Quiz Flask Server
-|   |-- requirements.txt       # Dependencies
-|   |-- .env                   # Local credentials key
-|   |-- static/style.css       # Standalone stylesheet
-|   |-- templates/index.html   # Standalone Planner & Quiz UI
-|
-|-- Rag_Document_answering/    # 4. Standalone Document QA / RAG (Port 5004)
-|   |-- app.py                 # Standalone RAG Search Flask Server
-|   |-- requirements.txt       # Dependencies
-|   |-- .env                   # Local credentials key
-|   |-- static/style.css       # Standalone stylesheet
-|   |-- templates/index.html   # Standalone Document RAG UI
-|   |-- utils/                 # Standalone RAG vector store and parsers
+├── app.py                     # Flask API routes and controllers
+├── models.py                  # SQLite database models, schemas, and migrations
+├── database.db                # Persistent database
+├── services/                  # Modular backend services
+│   ├── ai_service.py          # Unified AI client, token counting, cost & usage logging
+│   ├── document_processor.py  # Async PDF parsing, chunking, and concept extraction
+│   ├── retrieval_service.py   # Project-scoped retrieval and evidence thresholding
+│   ├── tutor_service.py       # Grounded tutor with citations & unsupported question check
+│   ├── assessment_service.py  # Adaptive quiz generation & open-ended AI grading
+│   ├── mastery_service.py     # Concept mastery (0-100%) and growth trend calculation
+│   ├── recommendation_service.py # "What should I do next?" recommendation engine
+│   ├── workflow_service.py    # Event logging & post-quiz downstream workflows
+│   └── evaluation_service.py  # Automated AI evaluation benchmark test runner
+├── static/
+│   ├── css/style.css          # Glassmorphic dark theme styling
+│   └── js/app.js              # Complete frontend client logic
+├── templates/
+│   └── index.html             # Responsive Single-Page Application
+├── tests/
+│   └── test_app.py            # Automated unit and integration test suite
+├── ARCHITECTURE.md            # System architecture and engineering decisions
+├── AI_USAGE.md                # AI in development vs product, prompts, evaluation report
+└── README.md                  # Project overview and quickstart guide
 ```
 
 ---
 
-## 🔑 Detailed API Configuration
+## 🚀 Quickstart & Setup Guide
 
-LastMinute.AI is model-agnostic and dynamically adapts to either **Groq** or **Google Gemini** credentials.
+### 1. Prerequisites
+- Python 3.10 or higher
+- A Groq API key (`gsk_...`) or Google Gemini API key
 
-### How to configure keys:
-1.  **Via Settings Panel**: Navigate to the Settings tab in the sidebar of the running application. Choose your provider, paste your key, and click **Save API Key**. This writes the credentials to your local `.env` and activates it in the running session immediately.
-2.  **Manual env Setup**: Create or edit the `.env` file in the root directory:
-    -   *To use Groq*: Add `GROQ_API_KEY=your_gsk_key_here`
-    -   *To use Gemini*: Add `GEMINI_API_KEY=your_aiza_key_here`
+### 2. Installation
+```powershell
+# Clone the repository
+git clone <repository_url>
+cd LastMinuteAI
 
----
-
-## ⚙️ Setup & Installation Guide
-
-### 1. Install Python
-Ensure **Python 3.12+** is installed on your operating system. Check this by executing:
-```bash
-python --version
-```
-
-### 2. Clone/Open Project
-Open your terminal in the workspace directory:
-```bash
-cd "c:/Users/bhimi/OneDrive/Desktop/New folder"
-```
-
-### 3. Setup Virtual Environment (Recommended)
-Create and activate a virtual environment to manage dependencies locally:
-```bash
-# Windows (PowerShell)
-python -m venv venv
-.\venv\Scripts\Activate.ps1
-
-# macOS/Linux
-python3 -m venv venv
-source venv/bin/activate
-```
-
-### 4. Install Dependencies
-Run the installation script to fetch all required libraries:
-```bash
+# Install dependencies
 pip install -r requirements.txt
 ```
 
----
+### 3. Environment Configuration
+Create or update your `.env` file in the root directory:
+```env
+GROQ_API_KEY=your_groq_api_key_here
+# Optional fallback
+GEMINI_API_KEY=your_gemini_api_key_here
+FLASK_SECRET_KEY=study-companion-secure-key-42
+```
 
-## 🚀 Running the Application
+### 4. Initialize Database & Run the App
+```powershell
+# Initialize SQLite database schema
+python models.py
 
-### Option A: Run the Unified Web Portal (Recommended)
-This launches the complete suite under the premium glassmorphic single-page dashboard:
-```bash
+# Start the Flask development server
 python app.py
 ```
-Open your browser and navigate to: **[http://127.0.0.1:5000/](http://127.0.0.1:5000/)**
+Open your browser and navigate to: **`http://localhost:5000`**
 
-### Option B: Run Standalone Sub-Projects
-You can run any of the standalone modules individually on their assigned ports:
-
-1.  **AI Resume Analyser (Port 5001)**:
-    ```bash
-    cd AI_Resume_Analyser
-    python app.py
-    ```
-    Access on: **`http://127.0.0.1:5001/`**
-2.  **Chatbot LLM (Port 5002)**:
-    ```bash
-    cd Chatbot_LLM
-    python app.py
-    ```
-    Access on: **`http://127.0.0.1:5002/`**
-3.  **Personalized Study Assistant (Port 5003)**:
-    ```bash
-    cd Personalized_study_assistent
-    python app.py
-    ```
-    Access on: **`http://127.0.0.1:5003/`**
-4.  **Document QA / RAG (Port 5004)**:
-    ```bash
-    cd Rag_Document_answering
-    python app.py
-    ```
-    Access on: **`http://127.0.0.1:5004/`**
+### 5. Default Credentials
+- **Student Account**: Create any username/password via the registration screen.
+- **Admin Account**: Username: `admin`, Password: `admin123` (Role: `admin`).
 
 ---
 
-## 🖥️ Unified Dashboard Interface Guide
+## 🧪 Running Automated Tests
 
-*   **Welcome Banner**: The landing section features a typewriter animation showcasing learning objectives and a quick-action route.
-*   **ATS Score Gauges**: Displays a circular SVG progress gauge showing your match percentage rating. It uses green for excellent matches, orange for potential matches, and red for suboptimal matches.
-*   **Drag-and-Drop Zones**: Features interactive upload containers that scale up and highlight with neon borders when hovering/dragging files over them.
-*   **VS Code Code Wrapper**: Code blocks generated in chat or study guides feature a syntax-header stating the programming language, along with a functional copy button.
-*   **Slide transitions**: MCQ grading transitions slide questions out smoothly for a premium, mobile-like feel.
+Run the complete test suite verifying authentication, project isolation, mastery updates, grounded retrieval, adaptive concept selection, and admin observability:
 
----
+```powershell
+python -m unittest discover -s tests -p "test_*.py"
+```
 
-## 📦 Standalone Sub-Projects Details
-
-Each standalone module is completely self-contained. They possess separate `static/` files and their own `.env` configuration file so that they can be submitted or graded independently:
-
-*   **AI_Resume_Analyser**: Integrates `pdfplumber` and `CountVectorizer` to score ATS matches and report skill gaps. Features a clean, simple, standalone layout.
-*   **Chatbot_LLM**: Standard LLM tutoring chatbot that handles local history arrays and renders clean markdown formatting.
-*   **Personalized_study_assistent**: Features a tabbed interface separating study planners from self-assessment quiz widgets and flipping cards.
-*   **Rag_Document_answering**: Implements the document uploader, text chunking, FAISS database creation, similarity search, and RAG context compilation under a simplified screen.
+Expected output:
+```
+Ran 6 tests in ~24s
+OK
+```
 
 ---
 
-## ❓ Troubleshooting & FAQs
+## 📊 Live Evaluation Suite
 
-#### Q: The application takes a few seconds to start up or index the first document. Is this normal?
-**A**: Yes. On the very first run, `HuggingFaceEmbeddings` downloads the `all-MiniLM-L6-v2` model files (about 90MB) from Hugging Face and loads them into memory using PyTorch. Subsequent indexing and uploader operations run instantly.
-
-#### Q: I get an API Key error when trying to run the chatbot or planner.
-**A**: Ensure you have saved your API key under the Settings tab or added it to the `.env` file. You can generate a free Groq key at [console.groq.com](https://console.groq.com/) or a Gemini key at [aistudio.google.com](https://aistudio.google.com/).
-
-#### Q: How do I test the RAG uploader?
-**A**: Go to the **Document QA (RAG)** tab, upload any PDF or TXT textbook chapter/slides, wait for the uploader status to confirm indexing is complete, and then ask a specific question. The AI will extract relevant passages and output the answer with citation snippets!
+Administrators can run the built-in AI benchmark evaluation suite directly from the **Admin Dashboard** tab by clicking **"Run AI Evaluation Suite"**. This programmatically tests:
+1. **Groundedness**: Tests citation formatting on reference passages.
+2. **Unsupported Questions**: Submits out-of-domain queries and verifies non-hallucination.
+3. **Semantic Assessment**: Assesses grading against multi-point rubrics.
+4. **Recommendation Actionability**: Verifies weak-concept targeting in next steps.

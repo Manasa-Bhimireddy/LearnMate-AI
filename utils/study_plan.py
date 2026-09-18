@@ -56,7 +56,7 @@ def create_study_plan(topic, duration_weeks=4, hours_per_week=10, skill_level="B
                         {"role": "system", "content": "You are an Expert AI Academic Advisor."},
                         {"role": "user", "content": prompt}
                     ],
-                    model="llama-3.1-8b-instant",
+                    model="llama3-8b-8192",
                     temperature=0.5
                 )
                 return completion.choices[0].message.content
